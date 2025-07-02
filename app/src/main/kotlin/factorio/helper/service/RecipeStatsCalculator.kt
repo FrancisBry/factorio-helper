@@ -25,22 +25,20 @@ class RecipeStatsCalculator {
     ): RecipeStats {
         val recipeGraph: DirectedAcyclicGraph<Item> =
             items.fold(
-                DirectedAcyclicGraph(),
+                DirectedAcyclicGraph())
                 {
                         graph: DirectedAcyclicGraph<Item>,
                         item,
                     ->
                     graph.addValue(item, items.getByNames(item.getRecipeComponentItemNames()).asCollection())
-                },
-            )
+                }
 
         val recipeStatsMap: Map<Item, RecipeStats> =
             recipeGraph.asBreadthFirstSequence().fold(
-                emptyMap(),
-                { accumulator, item -> addRecipeStatsToMap(accumulator, item, recipeGraph) },
-            )
+                emptyMap())
+                { accumulator, item -> addRecipeStatsToMap(accumulator, item, recipeGraph) }
 
-        return requireNotNull(recipeStatsMap.get(focusedItem))
+        return requireNotNull(recipeStatsMap[focusedItem])
     }
 
     private fun addRecipeStatsToMap(
@@ -52,15 +50,15 @@ class RecipeStatsCalculator {
             recipeGraph.forceGetVertex(item)
                 .edges
                 .map { it.value }
-                .map({
+                .map {
                     scaleComponentStatsToRecipe(
                         item,
                         item.forceGetRecipeComponentByItemName(it.name),
                         it,
-                        requireNotNull(map.get(it)),
+                        requireNotNull(map[it]),
                     )
-                })
-                .fold(RecipeStats(), { acc, stats -> acc.combine(stats) })
+                }
+                .fold(RecipeStats()) { acc, stats -> acc.combine(stats) }
 
         return map + Pair(item, calculateRecipeStatsGivenComponentStats(item, componentStats))
     }
@@ -72,9 +70,9 @@ class RecipeStatsCalculator {
         componentStats: RecipeStats,
     ): RecipeStats {
         val recipeQuantity: Double = recipeComponent.quantity
-        val recipeDuration: Long = if (component.recipe == null) 1000 else component.recipe.duration.toMillis()
+        val recipeDuration: Long = component.recipe?.duration?.toMillis() ?: 1000
         val componentQuantity: Double = component.recipe?.quantity ?: 1.0
-        val componentDuration: Long = if (item.recipe == null) 1000 else item.recipe.duration.toMillis()
+        val componentDuration: Long = item.recipe?.duration?.toMillis() ?: 1000
 
         // scalar = quantity * sink produced per second / source produced per second
         // Warning: messing with this calculation too much will result in floating point precision errors

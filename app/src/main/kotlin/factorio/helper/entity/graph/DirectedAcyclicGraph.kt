@@ -3,11 +3,11 @@ package factorio.helper.entity.graph
 import kotlin.Pair
 import kotlin.collections.emptyMap
 
-class DirectedAcyclicGraph<T : Any>(private val verticies: Map<T, DirectedAcyclicVertex<T>>) {
+class DirectedAcyclicGraph<T : Any>(private val vertices: Map<T, DirectedAcyclicVertex<T>>) {
     constructor() : this(emptyMap())
 
     fun getVertex(value: T): DirectedAcyclicVertex<T>? {
-        return verticies.get(value)
+        return vertices[value]
     }
 
     fun forceGetVertex(value: T): DirectedAcyclicVertex<T> {
@@ -18,25 +18,24 @@ class DirectedAcyclicGraph<T : Any>(private val verticies: Map<T, DirectedAcycli
         value: T,
         edges: Collection<T>,
     ): DirectedAcyclicGraph<T> {
-        return addVertex(verticies.get(value)?.addEdges(toVerticies(edges)) ?: DirectedAcyclicVertex(value, toVerticies(edges)))
+        return addVertex(vertices[value]?.addEdges(toVertices(edges)) ?: DirectedAcyclicVertex(value, toVertices(edges)))
     }
 
     fun asBreadthFirstSequence(): Sequence<T> {
-        return verticies.values.fold(
-            emptySequence(),
-            { sequence, vertex -> vertex.accumulateBreadthFirstSequence(sequence) },
-        )
+        return vertices.values.fold(
+            emptySequence())
+            { sequence, vertex -> vertex.accumulateBreadthFirstSequence(sequence) }
     }
 
     private fun addVertex(vertex: DirectedAcyclicVertex<T>): DirectedAcyclicGraph<T> {
-        return DirectedAcyclicGraph(verticies + vertex.getTraversableVerticies().map { Pair(it.value, it) })
+        return DirectedAcyclicGraph(vertices + vertex.getTraversableVertices().map { Pair(it.value, it) })
     }
 
-    private fun toVerticies(edges: Collection<T>): Collection<DirectedAcyclicVertex<T>> {
+    private fun toVertices(edges: Collection<T>): Collection<DirectedAcyclicVertex<T>> {
         return edges.asSequence().map(this::toVertex).toList()
     }
 
     private fun toVertex(edge: T): DirectedAcyclicVertex<T> {
-        return verticies.get(edge) ?: DirectedAcyclicVertex(edge, emptyList())
+        return vertices[edge] ?: DirectedAcyclicVertex(edge, emptyList())
     }
 }

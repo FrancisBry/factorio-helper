@@ -17,8 +17,8 @@ data class RecipeStats(val duration: Duration?, val components: Collection<Recip
         componentsA: Collection<RecipeComponentStats>,
         componentsB: Collection<RecipeComponentStats>,
     ): Collection<RecipeComponentStats> {
-        return (componentsA + componentsB).groupBy(RecipeComponentStats::item).values.map({
-            it.reduce({ componentA, componentB -> componentA.combine(componentB) })
-        })
+        return (componentsA + componentsB).groupBy(RecipeComponentStats::item).values.map {
+            it.reduce{ componentA, componentB -> componentA.combine(componentB) }
+        }
     }
 }

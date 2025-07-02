@@ -7,10 +7,6 @@ data class RecipeComponentStats(val item: Item, val quantityPerSecond: Double, v
         return RecipeComponentStats(item, quantityPerSecond * by, machinesRequired?.times(by))
     }
 
-    fun divideQuantityPerSecond(by: Double): RecipeComponentStats {
-        return RecipeComponentStats(item, quantityPerSecond / by, machinesRequired?.div(by))
-    }
-
     fun combine(other: RecipeComponentStats): RecipeComponentStats {
         return RecipeComponentStats(
             item,

@@ -8,11 +8,11 @@ data class Recipe(val duration: Duration, val quantity: Double, val components: 
     }
 
     fun getComponentItemNames(): Collection<String> {
-        return components.map({ it.itemName })
+        return components.map { it.itemName }
     }
 
     fun getComponentByItemName(name: String): RecipeComponent? {
-        return components.find { it.itemName.equals(name) }
+        return components.find { it.itemName == name }
     }
 
     fun getQuantityPerSecond(): Double {
